@@ -114,8 +114,46 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       ],
                     ),
                   ),
+
+                  Positioned(
+                    bottom: 40,
+                    left: 25,
+                    right: 25,
+                    child: index < 1 ? SizedBox.shrink() :  ElevatedButton(
+                      onPressed: () async {
+                        print("Current index is $index");
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return LoginScreen();
+                            },
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        
+                        backgroundColor: Color(0xFF21292B),
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(40),
+                        ),
+                      ),
+                      child: Text(
+                        "Bắt đầu",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ) ,
+                  ),
                 ],
               );
+
+                
             },
           ),
 
@@ -146,33 +184,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
           ),
 
-          Positioned(
-            bottom: 40,
-            left: 25,
-            right: 25,
-            child: ElevatedButton(
-              onPressed: () async {
-                Navigator.push(context,MaterialPageRoute(builder: (context){
-                  return LoginScreen();
-                }));
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF21292B),
-                padding: EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(40),
-                ),
-              ),
-              child: Text(
-                "Bắt đầu",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
+          
         ],
       ),
     );

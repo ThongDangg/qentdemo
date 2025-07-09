@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "929304829766",
+    "project_id": "qent-a60b7",
+    "storage_bucket": "qent-a60b7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:929304829766:android:9959d191413c80a2520f47",
+        "android_client_info": {
+          "package_name": "com.example.qentdemo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSCK08nT8x1Gi_ZVnhiZC1bJfrl5WUuao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

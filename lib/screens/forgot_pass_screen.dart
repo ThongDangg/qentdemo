@@ -81,7 +81,8 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 40,),
+                  
+                  SizedBox(height: 50),
                     //nut
                     SizedBox(
                       width: double.infinity,
@@ -123,7 +124,7 @@ class _ForgotPassScreenState extends State<ForgotPassScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const LoginScreen(),
+                                builder: (_) => LoginScreen(),
                               ),
                             );
                           },

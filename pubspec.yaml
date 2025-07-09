@@ -30,12 +30,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-    
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   sms_autofill: ^2.4.1
+  firebase_auth: ^5.6.2
+  cloud_firestore: ^5.6.11
+  firebase_core: ^3.15.1
+  flutterfire_cli: ^1.3.1
+  provider: ^6.1.5
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +69,16 @@ flutter:
     - assets/images/xe_den.png
     - assets/images/xe_trang.jpg
     - assets/images/logo_app_2.png
+    - assets/images/bmw.png
+    - assets/images/ferrari.png
+    - assets/images/lamborghini.png
+    - assets/images/tesla.png
+    - assets/images/huyndai.png
+    - assets/images/kia.png
+    - assets/images/lexus.png
+    - assets/images/vinfast.png
+    - assets/images/all.jpg
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -77,9 +92,13 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
+    - family: SF-Pro
+      fonts:
+        - asset: assets/fonts/SF-Pro.ttf
     - family: Roboto
       fonts:
         - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Bold.ttf
 
   #         style: italic
   #   - family: Trajan Pro
