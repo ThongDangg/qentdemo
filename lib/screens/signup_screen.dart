@@ -80,8 +80,9 @@ class _SignupScreenState extends State<SignupScreen> {
 
               const SizedBox(height: 40),
 
-              // Form đăng nhập
+              // Form đăng kys
               Form(
+                key: userForm,
                 child: Column(
                   children: [
                     TextFormField(
@@ -149,24 +150,25 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 25),
+
+                    TextFormField(
+                      controller: country,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Quốc gia";
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Quốc gia",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
                   ],
-                ),
-              ),
-              const SizedBox(height: 25),
-              TextFormField(
-                controller: country,
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Quốc gia";
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  labelText: "Quốc gia",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
                 ),
               ),
 
@@ -177,26 +179,31 @@ class _SignupScreenState extends State<SignupScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    // Xử ládadý khi click
-
-                    SignupController.createAccount(
+                    await SignupController.createAccount(
                       context: context,
                       email: email.text,
                       password: password.text,
                       name: fullname.text,
                       country: country.text,
                     );
-                    if(userForm.currentState!.validate()){
+                    if (userForm.currentState!.validate()) {
                       isLoading = true;
-                      setState(() {
-                        
-                      });
-                      
+                      setState(() {});
+                      //create account
+                      //  await SignupController.createAccount(
+                      //     context: context,
+                      //     email: email.text,
+                      //     password: password.text,
+                      //     name: name.text,
+                      //     country: country.text,
+                      //   );
+                      //   isLoading = false;
+                      //   setState(() {});
+                      //.text là thuộc tính để truy cập nội dung người dùng nhập vào TextField.
+                      //Bạn cần .text vì hàm createAccount() yêu cầu dữ liệu kiểu String, không phải TextEditingController.
                     }
-
-                    
                   },
-                  
+
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF21292B),
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -205,14 +212,18 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                     elevation: 0,
                   ),
-                  child: isLoading ? Expanded(child: CircularProgressIndicator(color: Colors.white,)) : const Text(
-                    "Đăng ký",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+                  child: isLoading
+                      ? Expanded(
+                          child: CircularProgressIndicator(color: Colors.white),
+                        )
+                      : const Text(
+                          "Đăng ký",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
               ),
 

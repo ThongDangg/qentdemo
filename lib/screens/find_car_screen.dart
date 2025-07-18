@@ -103,7 +103,7 @@ class _FindCarScreenState extends State<FindCarScreen> {
 
    Widget carListWidget;
 
-    if (selectedBrand == 'ALL') {
+    if (selectedBrand == 'all') {
       final cars = carProvider.carList;
       carListWidget = cars.isEmpty
           ? const Center(child: CircularProgressIndicator())
@@ -138,7 +138,7 @@ class _FindCarScreenState extends State<FindCarScreen> {
               selectedBrand = name;
             });
 
-            if (name != 'ALL') {
+            if (name != 'all') {
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -251,7 +251,7 @@ class _FindCarScreenState extends State<FindCarScreen> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
-                        _buildBrandLogo('assets/images/all.jpg', 'all'),
+                        _buildBrandLogo('assets/images/all.png', 'all'),
 
                         _buildBrandLogo(
                           'assets/images/tesla.png',
@@ -271,7 +271,7 @@ class _FindCarScreenState extends State<FindCarScreen> {
                     ),
                   ),
                   carListWidget,
-                  SizedBox(height: 80),
+                  SizedBox(height: 100),
                 ],
               ),
             ),

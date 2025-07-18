@@ -36,7 +36,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Provider.of<UserProvider>(
       context,
       listen: false,
-    ).getUserDetails(); //khi viết provider ngoài hàm build thì phải khai báo thêm listen false
+    ).fetchUserData(); //khi viết provider ngoài hàm build thì phải khai báo thêm listen false
 
     Navigator.pushReplacement(
       //để cho ko có nút quay lại

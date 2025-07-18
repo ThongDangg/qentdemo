@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:qentdemo/providers/userProvider.dart';
 import 'package:qentdemo/screens/home_screen.dart';
 import 'package:qentdemo/screens/welcome_screen.dart';
 
@@ -14,6 +16,8 @@ class LoginController {
         email: email,
         password: password,
       );
+              await Provider.of<UserProvider>(context, listen: false).fetchUserData();
+
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(

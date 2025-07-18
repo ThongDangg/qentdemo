@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:provider/provider.dart';
+import 'package:qentdemo/providers/userProvider.dart';
 import 'package:qentdemo/screens/home_screen.dart';
 import 'package:qentdemo/screens/welcome_screen.dart';
 
@@ -47,6 +49,7 @@ class SignupController {
       try {
         await db.collection("users").doc(userId.toString()).set(data);
         print("Đã lưu dữ liệu thành công");
+                      await Provider.of<UserProvider>(context, listen: false).fetchUserData();
 
         Navigator.pushAndRemoveUntil(
           //xóa lịch sử chỉ navigate tới đúng trang cần tới và kh có nút quay lại
@@ -61,7 +64,7 @@ class SignupController {
             return false;
           },
         );
-        print("Account created successfully");
+        
       } catch (e) {
         print("LỖI FIRESTORE: $e");
       }

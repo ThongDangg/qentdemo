@@ -3,17 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qentdemo/providers/carProvider.dart';
 import 'package:qentdemo/providers/userProvider.dart';
+import 'package:qentdemo/screens/car_detail_screen.dart';
 import 'package:qentdemo/screens/find_car_screen.dart';
 import 'package:qentdemo/screens/login_screen.dart';
+import 'package:qentdemo/screens/messages_screen.dart';
 import 'package:qentdemo/screens/splash_screen.dart';
 import 'package:qentdemo/screens/view_profile_screen.dart';
 import 'package:qentdemo/widgets/car_card.dart';
 import 'package:qentdemo/widgets/car_card_nearyou.dart';
 import 'package:qentdemo/widgets/custom_bottom_nav_bar.dart';
+import 'package:qentdemo/widgets/filter_bottom_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
+  
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -48,6 +51,27 @@ Widget _buildBrandLogo(String imagePath, String name) {
   );
 }
 
+
+
+  
+void onCarClicked({
+  required BuildContext context,
+  required int index,
+  required VoidCallback onRemove,
+}) {
+  final carProvider = Provider.of<CarProvider>(context, listen: false);
+  final cars = carProvider.carList;
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) {
+        return CarDetailScreen(car: cars[index]); // ✅ Truyền đúng 1 xe
+      },
+    ),
+  );
+}
+
 class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
@@ -74,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _currentIndex = index;
     });
 
-     switch (index) {
+    switch (index) {
       case 0:
         // Home - đã ở đây rồi
         print('Navigating to Home');
@@ -82,12 +106,18 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         // Search
         print('Navigating to Search');
-        Navigator.push(context, MaterialPageRoute(builder: (context) => FindCarScreen()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => FindCarScreen()),
+        );
         break;
       case 2:
         // Messages
         print('Navigating to Messages');
-        // Navigator.push(context, MaterialPageRoute(builder: (context) => MessagesScreen()));
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MessagesScreen()),
+        );
         break;
       case 3:
         // Notifications
@@ -107,6 +137,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    
+
+
+
+
     var userProvider = Provider.of<UserProvider>(context);
     var carProvider = Provider.of<CarProvider>(context);
 
@@ -306,18 +342,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                       SizedBox(width: 15),
-                      Container(
-                        height: 50,
-                        width: 50,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.grey.shade300),
+                      InkWell(
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(color: Colors.grey.shade300),
+                          ),
+                          child: Icon(
+                            Icons.tune,
+                            color: Colors.black,
+                          ), // icon giống hình
                         ),
-                        child: Icon(
-                          Icons.tune,
-                          color: Colors.black,
-                        ), // icon giống hình
                       ),
                     ],
                   ),
@@ -365,19 +403,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   cars.isEmpty
                       ? const Center(child: CircularProgressIndicator())
                       : SizedBox(
-                          height: 237, //237
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: cars.length,
-                            itemBuilder: (context, index) {
-                              final car = cars[index];
-                              return SizedBox(
+                        height: 237, //237
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: cars.length,
+                          itemBuilder: (context, index) {
+                            final car = cars[index];
+                            return InkWell(
+                              onTap: (){
+                                onCarClicked(context: context, index: index, onRemove: (){}); //phải đặt trog đây mới lấy index của thg được clicked
+                              },
+                              child: SizedBox(
                                 width: 186,
                                 child: CarCard(car: car),
-                              );
-                            },
-                          ),
+                              ),
+                            );
+                          },
                         ),
+                      ),
                   SizedBox(height: 30), //NEARR YOU
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -415,8 +458,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             },
                           ),
                         ),
-                                  const SizedBox(height: 100), //nhớ có cái này để cách ra với nav bar
-
+                  const SizedBox(
+                    height: 100,
+                  ), //nhớ có cái này để cách ra với nav bar
                 ],
               ),
             ),
@@ -426,12 +470,9 @@ class _HomeScreenState extends State<HomeScreen> {
               selectedIndex: _currentIndex,
               onItemTapped: _handleNavigation,
             ),
-          )
+          ),
         ],
-        
       ),
-       
-         
     );
   }
 }
