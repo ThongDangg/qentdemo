@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:qentdemo/providers/carProvider.dart';
 
 class BookingDetailScreen extends StatefulWidget {
   @override
@@ -32,6 +35,9 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+      final selectedCar = Provider.of<CarProvider>(context).selectCar;
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -61,7 +67,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
         children: [
           // Progress Indicator
           Container(
-            color: Colors.white,
             padding: EdgeInsets.all(20),
             child: Row(
               children: [
@@ -154,7 +159,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
   Widget _buildBookingDetailsStep() {
     return Container(
-      color: Colors.white,
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -297,10 +301,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
   Widget _buildPaymentMethodStep() {
     return Container(
-      color: Colors.white,
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
+        
         borderRadius: BorderRadius.circular(12),
         color: Colors.white,
       ),
@@ -327,7 +331,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
   Widget _buildConfirmationStep() {
     return Container(
-      color: Colors.white,
       margin: EdgeInsets.all(16),
       padding: EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -591,73 +594,99 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
   }
 
   void _handleNextStep() {
-    if (currentStep < 2) {
-      // Validate current step
-      if (currentStep == 0) {
-        if (nameController.text.isEmpty ||
-            emailController.text.isEmpty ||
-            phoneController.text.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Vui lòng điền đầy đủ thông tin bắt buộc')),
-          );
-          return;
-        }
-      } else if (currentStep == 1) {
-        if (selectedPaymentMethod.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Vui lòng chọn phương thức thanh toán')),
-          );
-          return;
-        }
+    // Validate từng bước
+    if (currentStep == 0) {
+      if (nameController.text.isEmpty ||
+          emailController.text.isEmpty ||
+          phoneController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Vui lòng điền đầy đủ thông tin bắt buộc')),
+        );
+        return;
       }
+    } else if (currentStep == 1) {
+      if (selectedPaymentMethod.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Vui lòng chọn phương thức thanh toán')),
+        );
+        return;
+      }
+    }
 
+    // Chuyển bước hoặc xác nhận
+    if (currentStep < 2) {
       setState(() {
         currentStep++;
       });
     } else {
-      // Final confirmation
+      // Bước cuối cùng
       _handleFinalConfirmation();
     }
   }
 
+
   void _handleFinalConfirmation() {
-    // Save all the data
+    final carProvider = Provider.of<CarProvider>(context, listen: false);
+    final selectedCar = carProvider.selectedCar;
+
+    if (selectedCar == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Không tìm thấy xe đã chọn')));
+      return;
+    }
+
+    int numberOfDays = returnDate.difference(pickupDate).inDays;
+    if (numberOfDays <= 0) numberOfDays = 1;
+
+    double basePrice = selectedCar.pricePerDay.toDouble();
+    double totalAmount = basePrice * numberOfDays;
+    double? driverFee = isDriverIncluded ? totalAmount * 0.2 : null;
+
+    // Tạo booking map
     Map<String, dynamic> bookingData = {
-      'name': nameController.text,
-      'email': emailController.text,
-      'phone': phoneController.text,
-      'address': addressController.text,
-      'gender': selectedGender,
-      'timeType': selectedTimeType,
-      'pickupDate': pickupDate,
-      'returnDate': returnDate,
-      'isDriverIncluded': isDriverIncluded,
-      'paymentMethod': selectedPaymentMethod,
-      'totalAmount': 1400,
+      'carId': selectedCar.id,
+      'customerInfo': {
+        'fullName': nameController.text,
+        'email': emailController.text,
+        'phone': phoneController.text,
+        'gender': selectedGender,
+        'address': addressController.text,
+      },
+      'bookingDetails': {
+        'pickupDate': pickupDate,
+        'returnDate': returnDate,
+        'rentalType': selectedTimeType,
+        'includeDriver': isDriverIncluded,
+        'duration': numberOfDays,
+        'durationUnit': 'ngày',
+      },
+      'paymentInfo': {'method': selectedPaymentMethod, 'status': 'pending'},
+      'pricingInfo': {
+        'basePrice': basePrice,
+        'driverFee': driverFee,
+        'totalAmount': totalAmount,
+        'currency': 'VND',
+      },
+      'status': 'pending',
+      'createdAt': Timestamp.now(),
+      'updatedAt': Timestamp.now(),
     };
 
-    // Here you would typically save to database or send to API
-    print('Booking Data: $bookingData');
-
-    // Show success message
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Đặt xe thành công'),
-        content: Text(
-          'Cảm ơn bạn đã đặt xe. Chúng tôi sẽ liên hệ với bạn sớm nhất.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-            },
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
+    FirebaseFirestore.instance
+        .collection('bookings')
+        .add(bookingData)
+        .then((docRef) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Đặt xe thành công!')));
+          Navigator.pop(context); // hoặc chuyển sang màn hình xác nhận
+        })
+        .catchError((error) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Lỗi khi đặt xe: $error')));
+        });
   }
 
   @override

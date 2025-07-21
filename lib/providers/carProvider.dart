@@ -6,6 +6,15 @@ class CarProvider extends ChangeNotifier{
 List<Car> carList = [];
   List<Car> get cars => carList;
 
+Car? _selectedCar;
+Car? get selectedCar => _selectedCar;
+
+
+void selectCar(Car car){
+  _selectedCar = car;
+  notifyListeners();
+}
+
 
   Future<void> fetchCars() async {
     try {

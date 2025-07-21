@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qentdemo/models/car_model.dart';
+import 'package:qentdemo/providers/carProvider.dart';
 import 'package:qentdemo/providers/userProvider.dart';
 import 'package:qentdemo/screens/booking_detail_screen.dart';
 import 'package:qentdemo/widgets/car_feature_card.dart';
@@ -329,12 +330,17 @@ class _CarDetailScreenState extends State<CarDetailScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
+                      context.read<CarProvider>().selectCar(
+                                car,
+                              ); // 👈 Gán xe vào Provider
 
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return BookingDetailScreen();
+                            return BookingDetailScreen(
+                                      
+                                    );
                           },
                         ),
                       );
